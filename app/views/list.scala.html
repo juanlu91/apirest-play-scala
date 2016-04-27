@@ -1,0 +1,131 @@
+@(currentPage: Page[(Employee)], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+    @****************************************
+    * Helper generating navigation links *
+    ****************************************@
+    @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+        routes.Application.list(newPage, newOrderBy.map { orderBy =>
+            if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+        }.getOrElse(currentOrderBy), currentFilter)
+
+    }
+
+        @**********************************
+        * Helper generating table headers *
+        ***********************************@
+    @header(orderBy: Int, title: String) = {
+        <th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{
+            if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"
+        }">
+            <a href="@link(0, Some(orderBy))">@title</a>
+        </th>
+    }
+
+    @main {
+
+        <h1>@Messages("employees.list.title", currentPage.total)</h1>
+
+        @flash.get("success").map { message =>
+            <div class="alert-message warning">
+                <strong>Done!</strong> @message
+            </div>
+        }
+
+        <div id="actions">
+
+            @helper.form(action = routes.Application.list()) {
+                <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by employee name...">
+                <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+            }
+
+            <a class="btn success" id="add" href="@routes.Application.create()">Add a new employee</a>
+
+        </div>
+
+
+
+        @Option(currentPage.items).filterNot(_.isEmpty).map { employees =>
+
+        <table class="employees zebra-striped">
+            <thead>
+                <tr>
+                    @header(2, "Employee first name")
+                    @header(3, "Employee last name")
+                    @header(4, "Employee gender")
+                    @header(5, "Employee birth date")
+                    @header(6, "Employee hire date")
+                </tr>
+            </thead>
+            <tbody>
+
+            @employees.map {
+                case (employee) => {
+                    <tr>
+                        <td><a href="@routes.Application.edit(employee.id.get)">@employee.firstName</a></td>
+
+                        <td>
+                        @employee.lastName.getOrElse {
+                            <em>-</em>
+                        }
+                        </td>
+
+                        <td>
+                        @employee.gender.getOrElse {
+                            <em>-</em>
+                        }
+                        </td>
+
+                        <td>
+                        @employee.birthDate.map(_.format("dd MMM yyyy")).getOrElse {
+                            <em>-</em>
+                        }
+                        </td>
+
+                        <td>
+                        @employee.hireDate.map(_.format("dd MMM yyyy")).getOrElse {
+                            <em>-</em>
+                        }
+                        </td>
+                    </tr>
+                }
+            }
+
+            </tbody>
+        </table>
+
+        <div id="pagination" class="pagination">
+            <ul>
+                @currentPage.prev.map { page =>
+                <li class="prev">
+                    <a href="@link(page)">&larr; Previous</a>
+                </li>
+                }.getOrElse {
+                    <li class="prev disabled">
+                        <a>&larr; Previous</a>
+                    </li>
+                }
+            <li class="current">
+                <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + employees.size) of @currentPage.total</a>
+            </li>
+                @currentPage.next.map { page =>
+                <li class="next">
+                    <a href="@link(page)">Next &rarr;</a>
+                </li>
+                }.getOrElse {
+                    <li class="next disabled">
+                        <a>Next &rarr;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        }.getOrElse {
+
+            <div class="well">
+                <em>Nothing to display</em>
+            </div>
+
+        }
+
+    }
+
+            

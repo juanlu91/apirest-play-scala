@@ -2,15 +2,38 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                               controllers.Application.index
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Default path will just redirect to the computer list
+GET           /                            controllers.Application.index
+
+# Employees list (look at the default values for pagination parameters)
+GET           /employees                   controllers.Application.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
+
+# Add employee
+GET           /employees/new               controllers.Application.create
+POST          /employees                   controllers.Application.save
+
+# Edit existing employee
+GET           /employees/:id               controllers.Application.edit(id:Int)
+POST          /employees/:id               controllers.Application.update(id:Int)
+
+# Delete an employee
+POST          /employees/:id/delete        controllers.Application.delete(id:Int)
+
+
+# API
+GET           /api/v1/employees            controllers.ApiController.list()
+GET           /api/v1/employees/:id        controllers.ApiController.get(id:Int)
+POST          /api/v1/employees            controllers.ApiController.create()
+DELETE        /api/v1/employees/:id        controllers.ApiController.delete(id:Int)
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
+GET           /assets/*file                controllers.Assets.at(path="/public", file)
 
-# Employees
-GET     /api/v1/employees                  controllers.EmployeesController.list
-GET     /api/v1/employees/:id              controllers.EmployeesController.read(id:String)
-POST    /api/v1/employees                  controllers.EmployeesController.create
 
 
