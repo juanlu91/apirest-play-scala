@@ -35,9 +35,8 @@
             @helper.form(action = routes.Application.list()) {
                 <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by employee name...">
                 <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+                <a class="btn success" href="@routes.Application.create()">Add a new employee</a>
             }
-
-            <a class="btn success" id="add" href="@routes.Application.create()">Add a new employee</a>
 
         </div>
 

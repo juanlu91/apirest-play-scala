@@ -38,18 +38,30 @@ class ApiController extends Controller {
     }
   }
 
+  def update(id: Int) = Action {implicit request =>
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+    jsonBody.get.validate[Employee] match {
+      case s: JsSuccess[Employee] => {
+        val employee: Employee = s.get
+        Employee.update(id, employee)
+        Ok("Employee " + employee.firstName + " has been updated successfully!")
+      }
+      case e: JsError => {
+        InternalServerError("Error: " + e.toString())
+      }
+    }
+  }
+
   def delete(id: Int) = Action {implicit request =>
     Employee.delete(id)
     Ok("Employee " + id + " has been deleted!")
   }
 
 
-  /*
-  * Reads, Writes
-   */
-
-
-  val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
+  /**
+    * Reads and Writes
+    */
 
   implicit val employeeWrites = new Writes[Employee] {
     def writes(employee: Employee) = Json.obj(
@@ -63,11 +75,11 @@ class ApiController extends Controller {
   }
 
   implicit val employeeReads: Reads[Employee] = (
-    (JsPath \ "emp_no").readNullable[Int] and
-      (JsPath \ "first_name").read[String] and
-      (JsPath \ "last_name").readNullable[String] and
+    (JsPath \ "id").readNullable[Int] and
+      (JsPath \ "firstName").read[String] and
+      (JsPath \ "lastName").readNullable[String] and
       (JsPath \ "gender").readNullable[String] and
-      (JsPath \ "birth_date").readNullable[Date](Reads.dateReads("yyyy-MM-dd")) and
-      (JsPath \ "hire_date").readNullable[Date](Reads.dateReads("yyyy-MM-dd"))
+      (JsPath \ "birthDate").readNullable[Date](Reads.dateReads("yyyy-MM-dd")) and
+      (JsPath \ "hireDate").readNullable[Date](Reads.dateReads("yyyy-MM-dd"))
     ) (Employee.apply _)
 }

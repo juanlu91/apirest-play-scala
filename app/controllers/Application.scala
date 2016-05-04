@@ -55,7 +55,14 @@ class Application extends Controller {
   }
 
   /**
-    * Display the 'edit form' of a existing Employee.
+    * Display the 'new employee form'.
+    */
+  def create = Action {
+    Ok(html.createForm(employeeForm))
+  }
+
+  /**
+    * Display the 'edit form' of an existing Employee.
     *
     * @param id Id of the employee to edit
     */
@@ -75,16 +82,9 @@ class Application extends Controller {
       formWithErrors => BadRequest(html.editForm(id, formWithErrors)),
       employee => {
         Employee.update(id, employee)
-        Home.flashing("success" -> "Employee %s has been updated".format(employee.firstName))
+        Home.flashing("success" -> s"Employee ${employee.firstName} has been updated")
       }
     )
-  }
-
-  /**
-    * Display the 'new employee form'.
-    */
-  def create = Action {
-    Ok(html.createForm(employeeForm))
   }
 
   /**
@@ -95,7 +95,7 @@ class Application extends Controller {
       formWithErrors => BadRequest(html.createForm(formWithErrors)),
       employee => {
         Employee.insert(employee)
-        Home.flashing("success" -> "Employee %s has been created".format(employee.firstName))
+        Home.flashing("success" -> s"Employee ${employee.firstName} has been created")
       }
     )
   }
@@ -107,6 +107,5 @@ class Application extends Controller {
     Employee.delete(id)
     Home.flashing("success" -> "Employee has been deleted")
   }
-
 }
 

@@ -2,12 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# Default path will just redirect to the computer list
+# Default path will just redirect to the employee list
 GET           /                            controllers.Application.index
 
 # Employees list (look at the default values for pagination parameters)
@@ -29,11 +24,9 @@ POST          /employees/:id/delete        controllers.Application.delete(id:Int
 GET           /api/v1/employees            controllers.ApiController.list()
 GET           /api/v1/employees/:id        controllers.ApiController.get(id:Int)
 POST          /api/v1/employees            controllers.ApiController.create()
+PUT           /api/v1/employees/:id        controllers.ApiController.update(id:Int)
 DELETE        /api/v1/employees/:id        controllers.ApiController.delete(id:Int)
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                controllers.Assets.at(path="/public", file)
-
-
-
